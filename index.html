@@ -33,32 +33,28 @@ schemaCallback([tableSchema]);
 };
 
 myConnector.getData = function(table, doneCallback) {
-var url = document.getElementById("url").value;
+var url = document.getElementById("url").value; // Get the URL from input
+console.log("Fetching data from URL:", url); // Log the URL being fetched
+
 $.getJSON(url, function(data) {
+console.log("Data retrieved:", data); // Log the retrieved data
 var tableData = [];
 
 // Process the data and populate tableData
 data.forEach(function(item) {
 tableData.push({
-id: item.id,
-name: item.name,
-value: item.value
+id: item.id, // Adjust based on your data structure
+title: item.title, // Example field from the sample API
+body: item.body // Example field from the sample API
 });
 });
 
-table.appendRows(tableData);
-doneCallback();
+table.appendRows(tableData); // Append the rows to the table
+doneCallback(); // Signal that data retrieval is complete
+}).fail(function() {
+console.error("Failed to fetch data from the URL."); // Log error if fetching fails
 });
 };
-
-tableau.registerConnector(myConnector);
-
-$(document).ready(function() {
-$("#submitButton").click(function() {
-tableau.connectionName = "My Web Data Connector";
-tableau.submit();
-});
-});
 </script>
 </body>
 </html>
