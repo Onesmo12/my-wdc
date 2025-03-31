@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Simple Web Data Connector</title>
+<script src="https://tableau.github.io/webdataconnector/lib/jquery.min.js"></script>
+<script src="https://tableau.github.io/webdataconnector/lib/tableauwdc-2.3.0.js"></script>
+</head>
+<body>
+<h1>Simple Web Data Connector</h1>
+<form>
+<label for="url">Data Source URL:</label>
+<input type="text" id="url" value="https://matokeo.necta.go.tz/results/2024/csee/CSEE2024/CSEE2024.htm" />
+<button id="submitButton">Submit</button>
+</form>
+
+<script>
+var myConnector = tableau.makeConnector();
+
+myConnector.getSchema = function(schemaCallback) {
+var cols = [
+{ id: "id", dataType: tableau.dataTypeEnum.string },
+{ id: "name", dataType: tableau.dataTypeEnum.string },
+{ id: "value", dataType: tableau.dataTypeEnum.float }
+];
+
+var tableSchema = {
+id: "myData",
+alias: "My Data",
+columns: cols
+};
+
+schemaCallback([tableSchema]);
+};
+
+myConnector.getData = function(table, doneCallback) {
+var url = document.getElementById("url").value;
+$.getJSON(url, function(data) {
+var tableData = [];
+
+// Process the data and populate tableData
+data.forEach(function(item) {
+tableData.push({
+id: item.id,
+name: item.name,
+value: item.value
+});
+});
+
+table.appendRows(tableData);
+doneCallback();
+});
+};
+
+tableau.registerConnector(myConnector);
+
+$(document).ready(function() {
+$("#submitButton").click(function() {
+tableau.connectionName = "My Web Data Connector";
+tableau.submit();
+});
+});
+</script>
+</body>
+</html>
