@@ -9,31 +9,28 @@
 <h1>Simple Web Data Connector</h1>
 <form>
 <label for="url">Data Source URL:</label>
-<input type="text" id="url" value="https://matokeo.necta.go.tz/results/2024/csee/CSEE2024/CSEE2024.htm" />
+<input type="text" id="url" value="https://jsonplaceholder.typicode.com/posts" />
 <button id="submitButton">Submit</button>
 </form>
-
 <script>
 var myConnector = tableau.makeConnector();
 
 myConnector.getSchema = function(schemaCallback) {
 var cols = [
 { id: "id", dataType: tableau.dataTypeEnum.string },
-{ id: "name", dataType: tableau.dataTypeEnum.string },
-{ id: "value", dataType: tableau.dataTypeEnum.float }
+{ id: "title", dataType: tableau.dataTypeEnum.string },
+{ id: "body", dataType: tableau.dataTypeEnum.string }
 ];
-
 var tableSchema = {
 id: "myData",
 alias: "My Data",
 columns: cols
 };
-
 schemaCallback([tableSchema]);
 };
 
 myConnector.getData = function(table, doneCallback) {
-var url = document.getElementById("url").value; // Get the URL from the input
+var url = document.getElementById("url").value; // Get the URL from input
 console.log("Fetching data from URL:", url); // Log the URL being fetched
 
 $.getJSON(url)
@@ -54,9 +51,18 @@ table.appendRows(tableData); // Append the rows to the table
 doneCallback(); // Signal that data retrieval is complete
 })
 .fail(function(jqXHR, textStatus, errorThrown) {
-console.error("Failed to fetch data from the URL:", textStatus, errorThrown); // Log error if fetching fails
+console.error("Failed to fetch data from the URL:", textStatus, errorThrown); // Log error
 });
 };
+
+tableau.registerConnector(myConnector);
+
+$(document).ready(function() {
+$("#submitButton").click(function() {
+tableau.connectionName = "Simple WDC"; // Name of the connection
+tableau.submit(); // Submit the connection
+});
+});
 </script>
 </body>
 </html>
