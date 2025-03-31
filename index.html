@@ -33,10 +33,11 @@ schemaCallback([tableSchema]);
 };
 
 myConnector.getData = function(table, doneCallback) {
-var url = document.getElementById("url").value; // Get the URL from input
+var url = document.getElementById("url").value; // Get the URL from the input
 console.log("Fetching data from URL:", url); // Log the URL being fetched
 
-$.getJSON(url, function(data) {
+$.getJSON(url)
+.done(function(data) {
 console.log("Data retrieved:", data); // Log the retrieved data
 var tableData = [];
 
@@ -51,8 +52,9 @@ body: item.body // Example field from the sample API
 
 table.appendRows(tableData); // Append the rows to the table
 doneCallback(); // Signal that data retrieval is complete
-}).fail(function() {
-console.error("Failed to fetch data from the URL."); // Log error if fetching fails
+})
+.fail(function(jqXHR, textStatus, errorThrown) {
+console.error("Failed to fetch data from the URL:", textStatus, errorThrown); // Log error if fetching fails
 });
 };
 </script>
